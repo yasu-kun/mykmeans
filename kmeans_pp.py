@@ -160,7 +160,6 @@ class kmeans:
             #重心のプロット
             #img2_ = ax.scatter(self.his_centers[i][:, 0],self.his_centers[i][:, 1],c=np.random.rand(4), s=30,alpha=1)
             img2_ = plt.scatter(self.his_centers[i][:, 0],self.his_centers[i][:, 1],c=center_col, s=30,alpha=1)
-            print(i)
             img2.append([img2_])
 
         ims = []

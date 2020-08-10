@@ -9,8 +9,6 @@ from matplotlib import animation
 
 
 class kmeans:
-
-
     def __init__(self, K, iter=10, random_state=0):
         self.iter = iter
         self.K = K
@@ -20,7 +18,6 @@ class kmeans:
         self.his_centers = []
 
     def generate(self):
-
         '''
         Generate sample data.
         Four mixed Gaussian distributions are generated.
@@ -31,15 +28,13 @@ class kmeans:
         X = np.stack([x1,x2],1)
         #shuffle
         np.random.shuffle(X)
-
         return X
     
     def fit(self,X):
         '''
         After initializing the id and centroid
         The id updates and centroid updates are repeated.
-        '''
-        
+        '''        
         #データをクラス全体に反映
         self.X = X
 
@@ -66,7 +61,6 @@ class kmeans:
             int_id_list = [int(k) for k in self.id.tolist()]
             self.his_id.append(int_id_list)
 
-
             #クラスが決まったので、そのクラスの中の平均の場所にセントロイドを移動させる。
             for k in range(self.K):
                 #idがTrueの行のみ取ってくる
@@ -81,8 +75,7 @@ class kmeans:
     def predict(self,X):
         '''
         Returns a list of classification results for the test data.
-        '''
-        
+        '''        
         la_list = []
         for i in range(X.shape[0]):
             la_list.append(np.argmin(np.sum((X[i,:] - self.centers)**2,axis=1)))
@@ -117,8 +110,7 @@ class kmeans:
 
     def plot_animation(self):
         '''
-        吾輩はまだ動かぬ.
-        
+        吾輩はまだ動かぬ.        
         '''
         #fit関数の１番上に必要
         fig = plt.figure()

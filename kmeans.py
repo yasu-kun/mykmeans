@@ -12,10 +12,6 @@ class kmeans:
 
 
     def __init__(self, K, iter=10, random_state=0):
-        '''
-        iter = 学習回数
-        K = クラス数
-        '''
         self.iter = iter
         self.K = K
         self.random_state = np.random.seed(random_state)
@@ -26,18 +22,24 @@ class kmeans:
     def generate(self):
 
         '''
-        サンプルデータを生成します
+        Generate sample data.
+        Four mixed Gaussian distributions are generated.
+        shape is (80,2)
         '''
-        #データ生成
         x1 = np.concatenate((np.random.normal(size=20,loc=1,scale=2),np.random.normal(size=20,loc=8,scale=2),np.random.normal(size=20,loc=15,scale=2),np.random.normal(size=20,loc=25,scale=2)))
         x2 = np.concatenate((np.random.normal(size=20,loc=15,scale=2),np.random.normal(size=20,loc=1,scale=2),np.random.normal(size=20,loc=20,scale=2),np.random.normal(size=20,loc=0,scale=2)))
         X = np.stack([x1,x2],1)
-        #わかりやすいようにシャッフル
+        #shuffle
         np.random.shuffle(X)
 
         return X
     
     def fit(self,X):
+        '''
+        After initializing the id and centroid
+        The id updates and centroid updates are repeated.
+        '''
+        
         #データをクラス全体に反映
         self.X = X
 
@@ -54,51 +56,46 @@ class kmeans:
         initial_centroid_indexes = np.random.choice(feature_indexes, self.K, replace=False)
         self.centers = self.X[initial_centroid_indexes]
         
-        
-
         #更新スタート
         for _ in range(self.iter):
             #一番近い点を探して、クラスを変更する
             for i in range(self.X.shape[0]):
                 self.id[i] = np.argmin(np.sum((self.X[i,:] - self.centers)**2,axis=1))
-                #print((self.X[i,:] - self.centers)**2)
-                #print(np.sum((self.X[i,:] - self.centers)**2,axis=1))
-                #print(np.argmin(np.sum((self.X[i,:] - self.centers)**2,axis=1)))
-            #print(self.id)
+            #idの更新履歴を残す。
+            #クラス番号なので、int型で欲しい＝＞tolist()メソッドを使うとfloat型になってしまう。
             int_id_list = [int(k) for k in self.id.tolist()]
             self.his_id.append(int_id_list)
-            #self.his_id.append(self.id)
+
 
             #クラスが決まったので、そのクラスの中の平均の場所にセントロイドを移動させる。
             for k in range(self.K):
                 #idがTrueの行のみ取ってくる
                 self.centers[k,:] = self.X[self.id==k,:].mean(axis=0)
-                #print(self.X)
-                #print(self.id)
-                #print(k)
-                #print(self.X[self.id==k,:])
-                #print(self.id==k)
+                
             c = self.centers.tolist()
             self.his_centers.append(c)
-        
+        #最終的にはnumpyで扱いたいので、更新終了後に型を変換
         self.his_id = np.array(self.his_id)
         self.his_centers = np.array(self.his_centers)
         
-
-                
-    
     def predict(self,X):
-        #分類結果をリスト型で返す
+        '''
+        Returns a list of classification results for the test data.
+        '''
+        
         la_list = []
         for i in range(X.shape[0]):
             la_list.append(np.argmin(np.sum((X[i,:] - self.centers)**2,axis=1)))
         return la_list
 
     def class_plot(self):
+        '''
+        Display the result of classification with matplotlib.
+        Each class datas are colored.
+        '''
         fig = plt.figure()
         ax = fig.add_subplot()
         random = np.random.rand(1)
-        #print(self.X)
 
         for j in range(self.K):
             random = np.random.rand(3)
@@ -110,21 +107,19 @@ class kmeans:
         #重心のプロット
         ax.scatter(self.centers[:, 0],self.centers[:, 1],c=np.random.rand(4), s=30,alpha=1)
         
-        #クラスのアノテーション
+        #クラス番号のアノテーション
         for i,x,y in zip(list(range(self.K)),self.centers[:,0].tolist(),self.centers[:,1].tolist()):
             ax.annotate(i,xy=(x, y))
-            
-        
+
         plt.show()
         plt.savefig('fig-kmeans.png')
 
 
-    def class_gif(self):
-        #gif
-        pass
-
     def plot_animation(self):
+        '''
+        吾輩はまだ動かぬ.
         
+        '''
         #fit関数の１番上に必要
         fig = plt.figure()
         #ax = fig.add_subplot()
